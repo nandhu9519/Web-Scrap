@@ -80,5 +80,12 @@ module.exports = {
                 res.json(error);
             })
         }
+    },
+    deleteRecord:(req,res)=>{
+        userHelper.deleteRecord(req.body.domainId).then((response) => {
+            res.json({response})
+        }).catch((error)=>{
+            res.json(error);
+        })
     }
 }

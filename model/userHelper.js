@@ -48,5 +48,14 @@ addFavorites: (domainId)=>{
             reject(error);
         })
     })
+},
+deleteRecord:(domainId)=>{
+    return new Promise(async(resolve,reject)=>{
+        db.get().collection(collection.HISTORY).deleteOne({_id:ObjectId(domainId)}).then((response)=>{
+           resolve(response);
+        }).catch((error)=>{
+            reject(error);
+        })
+    })
 }
 }

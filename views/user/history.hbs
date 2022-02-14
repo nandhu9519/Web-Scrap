@@ -7,7 +7,7 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    
+
                     <th scope="col">Domain Name</th>
                     <th scope="col">Word Count</th>
                     <th scope="col">Back Links</th>
@@ -18,32 +18,44 @@
             <tbody>
                 {{#each response}}
                 <tr>
-                    
+
                     <td>{{this.url}}</td>
                     <td>{{this.wordCount}}</td>
                     <td>
-                    {{#each this.backLinks}}
-                    <ul>
-                        <li><a style="color: black;" href="{{this}}">{{this}}</a></li>    
-                    </ul>
-                    
-                    {{/each}}
+                        {{#each this.backLinks}}
+                        <ul>
+                            <li><a style="color: black;" href="{{this}}">{{this}}</a></li>
+                        </ul>
+
+                        {{/each}}
                     </td>
                     <td>{{this.favorites}}</td>
                     <td>
                         {{#if this.favorites}}
-                        <button class="tableButton removeFavButton" onclick="changeStatus('{{this._id}}','{{this.favorites}}')"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
-                                fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+                        <button class="tableButton removeFavButton"
+                            onclick="changeStatus('{{this._id}}','{{this.favorites}}')"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                class="bi bi-heart-fill" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
                                     d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
                             </svg> </button>
                         {{else}}
-                        <button class="tableButton addFavButton" onclick="changeStatus('{{this._id}}','{{this.favorites}}')"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
-                                fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                        <button class="tableButton addFavButton"
+                            onclick="changeStatus('{{this._id}}','{{this.favorites}}')"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                                class="bi bi-heart" viewBox="0 0 16 16">
                                 <path
                                     d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z" />
                             </svg></button>
                         {{/if}}
+                        <br>
+                        <br>
+                        <button class="tableButton" onclick="remove('{{this._id}}')"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                            class="bi bi-x-octagon-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M11.46.146A.5.5 0 0 0 11.107 0H4.893a.5.5 0 0 0-.353.146L.146 4.54A.5.5 0 0 0 0 4.893v6.214a.5.5 0 0 0 .146.353l4.394 4.394a.5.5 0 0 0 .353.146h6.214a.5.5 0 0 0 .353-.146l4.394-4.394a.5.5 0 0 0 .146-.353V4.893a.5.5 0 0 0-.146-.353L11.46.146zm-6.106 4.5L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z" />
+                        </svg>
+                        </button>
                     </td>
                 </tr>
                 {{/each}}
@@ -53,17 +65,30 @@
 </div>
 </div>
 <script>
-    function changeStatus(domainId,favoriteStatus){
-        console.log('enter',favoriteStatus,domainId)
+    function remove(domainId){
+        console.log('delete')
         $.ajax({
-            method:'POST',
+            method: 'DELETE',
+            url: '/deleteHistory',
+            data: { domainId },
+            success: (response) => {
+                alertify.error("Record Deleted");
+                setTimeout(function () {
+                    location.reload();
+                }, 1000);
+            }
+        })
+    }
+    function changeStatus(domainId, favoriteStatus) {
+        $.ajax({
+            method: 'PATCH',
             url: '/favoriteStatus',
-            data:{domainId,favoriteStatus},
-            success: (response)=>{
+            data: { domainId, favoriteStatus },
+            success: (response) => {
                 alertify.error("Favorites Updated");
                 setTimeout(function () {
-                location.reload();
-              },1000);
+                    location.reload();
+                }, 1000);
             }
         })
     }
