@@ -15,14 +15,22 @@ module.exports = {
         try {
 
             const response = await got(req.body.link);
-
             const html = response.body;
-
             const $ = Cheerio.load(html);
+            const backLinks = []
 
+            //extract backlinks
+            links = $('a');
+            $(links).each(function(i, link){
+                var href = $(link).attr('href');
+                console.log('log',req.body.link,' ',href);
+                if(!href.startsWith(req.body.link) && href.startsWith('https://')){
+                    backLinks.push(href);
+                }
+              });
+
+            //word count
             const linkObjects = $('h1,h2,h3,h4,h5,h6,p,li,th,td');
-
-            // Collect the "href" and "title" of each link and add them to an array
             const allWords = [];
             linkObjects.each((index, element) => {
                 allWords.push($(element).text(), // get the text
@@ -38,7 +46,7 @@ module.exports = {
                 count += str.split(' ').length;
             })
 
-            userHelper.submitUrl(count, req.body.link).then((response) => {
+            userHelper.submitUrl(count, req.body.link,backLinks).then((response) => {
                 res.redirect('/history')
             })
         } catch (error) {
@@ -57,7 +65,7 @@ module.exports = {
         })
     },
 
-    //change favrorites status
+    //change favorites status
     favoriteStatus: (req, res) => {
         if (req.body.favoriteStatus === 'true') {
             userHelper.removeFavorites(req.body.domainId).then((response) => {

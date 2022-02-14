@@ -3,11 +3,12 @@ const collection = require('../config/collections');
 const { ObjectId } = require('mongodb');
 module.exports={
 
-submitUrl:(wordCount,url)=>{
+submitUrl:(wordCount,url,backLinks)=>{
     return new Promise(async(resolve,reject)=>{
          await db.get().collection(collection.HISTORY).insertOne({
-            wordCount: wordCount,
+            wordCount:wordCount,
             url: url,
+            backLinks:backLinks,
             favorites: false 
         }).then((response)=>{
             if(response){
